@@ -21,7 +21,6 @@ class HtmlEditorWidget extends StatefulWidget {
     required this.htmlEditorOptions,
     required this.htmlToolbarOptions,
     required this.otherOptions,
-    required this.initBC,
   }) : super(key: key);
 
   final HtmlEditorController controller;
@@ -30,7 +29,6 @@ class HtmlEditorWidget extends StatefulWidget {
   final HtmlEditorOptions htmlEditorOptions;
   final HtmlToolbarOptions htmlToolbarOptions;
   final OtherOptions otherOptions;
-  final BuildContext initBC;
 
   @override
   _HtmlEditorWidgetWebState createState() => _HtmlEditorWidgetWebState();
@@ -68,7 +66,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
     super.initState();
   }
 
-  void initSummernote() async {
+  Future<void> initSummernote() async {
     var headString = '';
     var summernoteCallbacks = '''callbacks: {
         onKeydown: function(e) {
@@ -183,7 +181,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
     }
     summernoteCallbacks = summernoteCallbacks + '}';
     var darkCSS = '';
-    if ((Theme.of(widget.initBC).brightness == Brightness.dark ||
+    if ((Theme.of(context).brightness == Brightness.dark ||
             widget.htmlEditorOptions.darkMode == true) &&
         widget.htmlEditorOptions.darkMode != false) {
       darkCSS =
@@ -463,11 +461,10 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
         .replaceFirst('"summernote-lite.min.js"',
             '"assets/packages/html_editor_enhanced/assets/summernote-lite.min.js"');
     if (widget.callbacks != null) addJSListener(widget.callbacks!);
+
     final iframe = html.IFrameElement()
-      ..width = MediaQuery.of(widget.initBC).size.width.toString() //'800'
-      ..height = widget.htmlEditorOptions.autoAdjustHeight
-          ? actualHeight.toString()
-          : widget.otherOptions.height.toString()
+      ..width = MediaQuery.sizeOf(context).width.toString() //'800'
+      ..height = MediaQuery.sizeOf(context).height.toString()
       // ignore: unsafe_html, necessary to load HTML string
       ..srcdoc = htmlString
       ..style.border = 'none'
@@ -531,8 +528,8 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
         html.window.postMessage(jsonStr, '*');
         html.window.postMessage(jsonStr2, '*');
       });
-    platformViewRegistry
-        .registerViewFactory(createdViewId, (int viewId) => iframe);
+    platformViewRegistry.registerViewFactory(
+        createdViewId, (int viewId) => iframe);
     setState(mounted, this.setState, () {
       summernoteInit = Future.value(true);
     });
@@ -541,9 +538,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: widget.htmlEditorOptions.autoAdjustHeight
-          ? actualHeight
-          : widget.otherOptions.height,
+      height: MediaQuery.sizeOf(context).height,
       child: Column(
         children: <Widget>[
           widget.htmlToolbarOptions.toolbarPosition ==
