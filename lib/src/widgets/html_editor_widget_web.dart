@@ -59,13 +59,26 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
   /// Tracks whether the editor was disabled onInit (to avoid re-disabling on reload)
   bool alreadyDisabled = false;
 
+  bool _initialized = false;
+
   @override
   void initState() {
     actualHeight = widget.boxHeight;
     createdViewId = getRandString(10);
     widget.controller.viewId = createdViewId;
-    initSummernote();
+
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_initialized) {
+      initSummernote();
+
+      _initialized = true;
+    }
   }
 
   Future<void> initSummernote() async {
