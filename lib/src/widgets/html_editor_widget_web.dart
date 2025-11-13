@@ -466,7 +466,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
 
     final iframe = html.IFrameElement()
       ..width = MediaQuery.sizeOf(context).width.toString() //'800'
-      ..height = widget.boxHeight.toString()
+      ..height = actualHeight.toString()
       // ignore: unsafe_html, necessary to load HTML string
       ..srcdoc = htmlString
       ..style.border = 'none'
@@ -538,9 +538,17 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
   }
 
   @override
+  void didUpdateWidget(covariant HtmlEditorWidget oldWidget) {
+    actualHeight = widget.boxHeight;
+    print("Did update widget çalıştı:Actual Height:$actualHeight ");
+    initSummernote();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-      height: widget.boxHeight,
+      height: actualHeight,
       child: Column(
         children: <Widget>[
           widget.htmlToolbarOptions.toolbarPosition ==
@@ -562,10 +570,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
                             viewType: createdViewId,
                           );
                         } else {
-                          return Container(
-                              height: widget.htmlEditorOptions.autoAdjustHeight
-                                  ? actualHeight
-                                  : widget.boxHeight);
+                          return Container(height: actualHeight);
                         }
                       }))),
           widget.htmlToolbarOptions.toolbarPosition ==
