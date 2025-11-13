@@ -465,8 +465,8 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
     if (widget.callbacks != null) addJSListener(widget.callbacks!);
 
     final iframe = html.IFrameElement()
-      ..width = MediaQuery.sizeOf(context).width.toString() //'800'
-      ..height = actualHeight.toString()
+      ..style.width = '100%'
+      ..style.height = '100%'
       // ignore: unsafe_html, necessary to load HTML string
       ..srcdoc = htmlString
       ..style.border = 'none'
@@ -499,10 +499,12 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
             if ((docHeight != null && docHeight != actualHeight) &&
                 mounted &&
                 docHeight > 0) {
-              setState(mounted, this.setState, () {
-                actualHeight =
-                    docHeight + (toolbarKey.currentContext?.size?.height ?? 0);
-              });
+              if (mounted) {
+                setState(() {
+                  actualHeight = docHeight +
+                      (toolbarKey.currentContext?.size?.height ?? 0);
+                });
+              }
             }
           }
           if (data['type'] != null &&
@@ -532,22 +534,28 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
       });
     platformViewRegistry.registerViewFactory(
         createdViewId, (int viewId) => iframe);
-    setState(mounted, this.setState, () {
-      summernoteInit = Future.value(true);
-    });
+    if (mounted) {
+      setState(() {
+        summernoteInit = Future.value(true);
+      });
+    }
   }
 
   @override
   void didUpdateWidget(covariant HtmlEditorWidget oldWidget) {
-    actualHeight = widget.boxHeight;
-    print("Did update widget çalıştı:Actual Height:$actualHeight ");
-    initSummernote();
     super.didUpdateWidget(oldWidget);
+
+    // Sadece gerçekten yükseklik değiştiyse state güncelle
+    if (oldWidget.boxHeight != widget.boxHeight) {
+      setState(() {
+        actualHeight = widget.boxHeight;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: actualHeight,
       child: Column(
         children: <Widget>[

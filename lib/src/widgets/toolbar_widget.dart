@@ -116,14 +116,21 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
     super.initState();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
   void disable() {
-    setState(mounted, this.setState, () {
+    setState(() {
       _enabled = false;
     });
   }
 
   void enable() {
-    setState(mounted, this.setState, () {
+    setState(() {
       _enabled = true;
     });
   }
@@ -156,44 +163,44 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
     //check the parent element if it matches one of the predetermined styles and update the toolbar
     if (['pre', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']
         .contains(parentElem)) {
-      setState(mounted, this.setState, () {
+      setState(() {
         _fontSelectedItem = parentElem;
       });
     } else {
-      setState(mounted, this.setState, () {
+      setState(() {
         _fontSelectedItem = 'p';
       });
     }
     //check the font name if it matches one of the predetermined fonts and update the toolbar
     if (['Courier New', 'sans-serif', 'Times New Roman'].contains(fontName)) {
-      setState(mounted, this.setState, () {
+      setState(() {
         _fontNameSelectedItem = fontName;
       });
     } else {
-      setState(mounted, this.setState, () {
+      setState(() {
         _fontNameSelectedItem = 'sans-serif';
       });
     }
     //update the fore/back selected color if necessary
     if (colorList[0] != null && colorList[0]!.isNotEmpty) {
-      setState(mounted, this.setState, () {
+      setState(() {
         var rgb = colorList[0]!.replaceAll('rgb(', '').replaceAll(')', '');
         var rgbList = rgb.split(', ');
         _foreColorSelected = Color.fromRGBO(int.parse(rgbList[0]),
             int.parse(rgbList[1]), int.parse(rgbList[2]), 1);
       });
     } else {
-      setState(mounted, this.setState, () {
+      setState(() {
         _foreColorSelected = Colors.black;
       });
     }
     if (colorList[1] != null && colorList[1]!.isNotEmpty) {
-      setState(mounted, this.setState, () {
+      setState(() {
         _backColorSelected =
             Color(int.parse(colorList[1]!, radix: 16) + 0xFF000000);
       });
     } else {
-      setState(mounted, this.setState, () {
+      setState(() {
         _backColorSelected = Colors.yellow;
       });
     }
@@ -208,7 +215,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       'circle',
       'square'
     ].contains(listType)) {
-      setState(mounted, this.setState, () {
+      setState(() {
         _listStyleSelectedItem = listType;
       });
     } else {
@@ -222,33 +229,33 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
       lineHeights =
           lineHeights.map((e) => e * _actualFontSizeSelectedItem).toList();
       if (lineHeights.contains(lineHeightDouble)) {
-        setState(mounted, this.setState, () {
+        setState(() {
           _lineHeightSelectedItem =
               lineHeightDouble / _actualFontSizeSelectedItem;
         });
       }
     } else if (lineHeight == 'normal') {
-      setState(mounted, this.setState, () {
+      setState(() {
         _lineHeightSelectedItem = 1.0;
       });
     }
     //check if the font size matches one of the predetermined sizes and update the toolbar
     if ([1, 2, 3, 4, 5, 6, 7].contains(fontSize)) {
-      setState(mounted, this.setState, () {
+      setState(() {
         _fontSizeSelectedItem = fontSize;
       });
     }
     if (textDir == 'ltr') {
-      setState(mounted, this.setState, () {
+      setState(() {
         _textDirectionSelected = [true, false];
       });
     } else if (textDir == 'rtl') {
-      setState(mounted, this.setState, () {
+      setState(() {
         _textDirectionSelected = [false, true];
       });
     }
     //use the remaining bool lists to update the selected items accordingly
-    setState(mounted, this.setState, () {
+    setState(() {
       for (var t in widget.htmlToolbarOptions.defaultToolbarButtons) {
         if (t is FontButtons) {
           for (var i = 0; i < _fontSelected.length; i++) {
@@ -409,7 +416,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                     color: Colors.grey,
                                   ),
                                   onPressed: () async {
-                                    setState(mounted, this.setState, () {
+                                    setState(() {
                                       _isExpanded = !_isExpanded;
                                     });
                                     await Future.delayed(
@@ -438,7 +445,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                             delegate: ExpandIconDelegate(
                                 widget.htmlToolbarOptions.toolbarItemHeight,
                                 _isExpanded, () async {
-                              setState(mounted, this.setState, () {
+                              setState(() {
                                 _isExpanded = !_isExpanded;
                               });
                               await Future.delayed(Duration(milliseconds: 100));
@@ -580,7 +587,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               onChanged: (String? changed) async {
                 void updateSelectedItem(dynamic changed) {
                   if (changed is String) {
-                    setState(mounted, this.setState, () {
+                    setState(() {
                       _fontSelectedItem = changed;
                     });
                   }
@@ -663,7 +670,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 onChanged: (String? changed) async {
                   void updateSelectedItem(dynamic changed) async {
                     if (changed is String) {
-                      setState(mounted, this.setState, () {
+                      setState(() {
                         _fontNameSelectedItem = changed;
                       });
                     }
@@ -769,7 +776,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 onChanged: (double? changed) async {
                   void updateSelectedItem(dynamic changed) {
                     if (changed is double) {
-                      setState(mounted, this.setState, () {
+                      setState(() {
                         _fontSizeSelectedItem = changed;
                       });
                     }
@@ -865,7 +872,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 onChanged: (String? changed) async {
                   void updateSelectedItem(dynamic changed) {
                     if (changed is String) {
-                      setState(mounted, this.setState, () {
+                      setState(() {
                         _fontSizeUnitSelectedItem = changed;
                       });
                     }
@@ -911,7 +918,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             textStyle: widget.htmlToolbarOptions.textStyle,
             onPressed: (int index) async {
               void updateStatus() {
-                setState(mounted, this.setState, () {
+                setState(() {
                   _fontSelected[index] = !_fontSelected[index];
                 });
               }
@@ -981,7 +988,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             textStyle: widget.htmlToolbarOptions.textStyle,
             onPressed: (int index) async {
               void updateStatus() {
-                setState(mounted, this.setState, () {
+                setState(() {
                   _miscFontSelected[index] = !_miscFontSelected[index];
                 });
               }
@@ -1044,7 +1051,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           textStyle: widget.htmlToolbarOptions.textStyle,
           onPressed: (int index) async {
             void updateStatus(Color? color) {
-              setState(mounted, this.setState, () {
+              setState(() {
                 _colorSelected[index] = !_colorSelected[index];
                 if (color != null &&
                     t.getIcons()[index].icon == Icons.format_color_text) {
@@ -1120,7 +1127,8 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                               newColor = color;
                             },
                             title: Text('Choose a Color',
-                                style: Theme.of(context).textTheme.headlineSmall),
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall),
                             width: 40,
                             height: 40,
                             spacing: 0,
@@ -1152,7 +1160,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                 onPressed: () {
                                   if (t.getIcons()[index].icon ==
                                       Icons.format_color_text) {
-                                    setState(mounted, this.setState, () {
+                                    setState(() {
                                       _foreColorSelected = Colors.black;
                                     });
                                     widget.controller.execCommand(
@@ -1163,7 +1171,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                   }
                                   if (t.getIcons()[index].icon ==
                                       Icons.format_color_fill) {
-                                    setState(mounted, this.setState, () {
+                                    setState(() {
                                       _backColorSelected = Colors.yellow;
                                     });
                                     widget.controller.execCommand(
@@ -1184,7 +1192,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                           .toRadixString(16)
                                           .padLeft(6, '0')
                                           .toUpperCase());
-                                  setState(mounted, this.setState, () {
+                                  setState(() {
                                     _foreColorSelected = newColor;
                                   });
                                 }
@@ -1195,11 +1203,11 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                           .toRadixString(16)
                                           .padLeft(6, '0')
                                           .toUpperCase());
-                                  setState(mounted, this.setState, () {
+                                  setState(() {
                                     _backColorSelected = newColor;
                                   });
                                 }
-                                setState(mounted, this.setState, () {
+                                setState(() {
                                   _colorSelected[index] =
                                       !_colorSelected[index];
                                 });
@@ -1241,7 +1249,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             textStyle: widget.htmlToolbarOptions.textStyle,
             onPressed: (int index) async {
               void updateStatus() {
-                setState(mounted, this.setState, () {
+                setState(() {
                   _listSelected[index] = !_listSelected[index];
                 });
               }
@@ -1344,7 +1352,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 onChanged: (String? changed) async {
                   void updateSelectedItem(dynamic changed) {
                     if (changed is String) {
-                      setState(mounted, this.setState, () {
+                      setState(() {
                         _listStyleSelectedItem = changed;
                       });
                     }
@@ -1401,7 +1409,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             onPressed: (int index) async {
               void updateStatus() {
                 _alignSelected = List<bool>.filled(t.getIcons1().length, false);
-                setState(mounted, this.setState, () {
+                setState(() {
                   _alignSelected[index] = !_alignSelected[index];
                 });
               }
@@ -1561,7 +1569,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                 onChanged: (double? changed) async {
                   void updateSelectedItem(dynamic changed) {
                     if (changed is double) {
-                      setState(mounted, this.setState, () {
+                      setState(() {
                         _lineHeightSelectedItem = changed;
                       });
                     }
@@ -1614,7 +1622,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             onPressed: (int index) async {
               void updateStatus() {
                 _textDirectionSelected = List<bool>.filled(2, false);
-                setState(mounted, this.setState, () {
+                setState(() {
                   _textDirectionSelected[index] =
                       !_textDirectionSelected[index];
                 });
@@ -2628,7 +2636,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
             textStyle: widget.htmlToolbarOptions.textStyle,
             onPressed: (int index) async {
               void updateStatus() {
-                setState(mounted, this.setState, () {
+                setState(() {
                   _miscSelected[index] = !_miscSelected[index];
                 });
               }
