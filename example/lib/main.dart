@@ -67,6 +67,7 @@ class _HtmlEditorExampleState extends State<HtmlEditorExample> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               HtmlEditor(
+                boxHeigh: 400,
                 controller: controller,
                 htmlEditorOptions: HtmlEditorOptions(
                   hint: 'Your text here...',
@@ -84,8 +85,7 @@ class _HtmlEditorExampleState extends State<HtmlEditorExample> {
                   },
                   onDropdownChanged: (DropdownType type, dynamic changed,
                       Function(dynamic)? updateSelectedItem) {
-                    print(
-                        "dropdown '${type.name}' changed to $changed");
+                    print("dropdown '${type.name}' changed to $changed");
                     return true;
                   },
                   mediaLinkInsertInterceptor:
@@ -101,7 +101,6 @@ class _HtmlEditorExampleState extends State<HtmlEditorExample> {
                     return true;
                   },
                 ),
-                otherOptions: OtherOptions(height: 550),
                 callbacks: Callbacks(onBeforeCommand: (String? currentHtml) {
                   print('html before change is $currentHtml');
                 }, onChangeContent: (String? changed) {
