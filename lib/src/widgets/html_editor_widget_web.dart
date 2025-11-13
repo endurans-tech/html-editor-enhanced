@@ -13,15 +13,16 @@ import 'dart:html' as html;
 
 /// The HTML Editor widget itself, for web (uses IFrameElement)
 class HtmlEditorWidget extends StatefulWidget {
-  HtmlEditorWidget({
-    Key? key,
-    required this.controller,
-    this.callbacks,
-    required this.plugins,
-    required this.htmlEditorOptions,
-    required this.htmlToolbarOptions,
-    required this.otherOptions,
-  }) : super(key: key);
+  HtmlEditorWidget(
+      {Key? key,
+      required this.controller,
+      this.callbacks,
+      required this.plugins,
+      required this.htmlEditorOptions,
+      required this.htmlToolbarOptions,
+      required this.otherOptions,
+      required this.boxHeight})
+      : super(key: key);
 
   final HtmlEditorController controller;
   final Callbacks? callbacks;
@@ -29,6 +30,7 @@ class HtmlEditorWidget extends StatefulWidget {
   final HtmlEditorOptions htmlEditorOptions;
   final HtmlToolbarOptions htmlToolbarOptions;
   final OtherOptions otherOptions;
+  final double boxHeight;
 
   @override
   _HtmlEditorWidgetWebState createState() => _HtmlEditorWidgetWebState();
@@ -59,7 +61,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
 
   @override
   void initState() {
-    actualHeight = widget.otherOptions.height;
+    actualHeight = widget.boxHeight;
     createdViewId = getRandString(10);
     widget.controller.viewId = createdViewId;
     initSummernote();
@@ -209,7 +211,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
           \$('#summernote-2').summernote({
             placeholder: "${widget.htmlEditorOptions.hint}",
             tabsize: 2,
-            height: ${widget.otherOptions.height},
+            height: ${widget.boxHeight},
             disableGrammar: false,
             spellCheck: ${widget.htmlEditorOptions.spellCheck},
             maximumFileSize: $maximumFileSize,
@@ -464,7 +466,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
 
     final iframe = html.IFrameElement()
       ..width = MediaQuery.sizeOf(context).width.toString() //'800'
-      ..height = MediaQuery.sizeOf(context).height.toString()
+      ..height = widget.boxHeight.toString()
       // ignore: unsafe_html, necessary to load HTML string
       ..srcdoc = htmlString
       ..style.border = 'none'
@@ -538,7 +540,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.sizeOf(context).height,
+      height: widget.boxHeight,
       child: Column(
         children: <Widget>[
           widget.htmlToolbarOptions.toolbarPosition ==
@@ -563,7 +565,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
                           return Container(
                               height: widget.htmlEditorOptions.autoAdjustHeight
                                   ? actualHeight
-                                  : widget.otherOptions.height);
+                                  : widget.boxHeight);
                         }
                       }))),
           widget.htmlToolbarOptions.toolbarPosition ==

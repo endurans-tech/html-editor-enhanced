@@ -418,17 +418,9 @@ class OtherOptions {
       border:
           Border.fromBorderSide(BorderSide(color: Color(0xffececec), width: 1)),
     ),
-    this.height = 400,
   });
 
   /// The BoxDecoration to use around the Html editor. By default, the widget
   /// uses a thin, dark, rounded rectangle border around the widget.
   final BoxDecoration decoration;
-
-  /// Sets the height of the Html editor widget. This takes the toolbar into
-  /// account (i.e. this sets the height of the entire widget rather than the
-  /// editor space)
-  ///
-  /// The default value is 400.
-  final double height;
 }

@@ -5,15 +5,16 @@ import 'package:flutter/material.dart';
 
 /// HtmlEditor class for web
 class HtmlEditor extends StatelessWidget {
-  HtmlEditor({
-    Key? key,
-    required this.controller,
-    this.callbacks,
-    this.htmlEditorOptions = const HtmlEditorOptions(),
-    this.htmlToolbarOptions = const HtmlToolbarOptions(),
-    this.otherOptions = const OtherOptions(),
-    this.plugins = const [],
-  }) : super(key: key);
+  HtmlEditor(
+      {Key? key,
+      required this.controller,
+      this.callbacks,
+      this.htmlEditorOptions = const HtmlEditorOptions(),
+      this.htmlToolbarOptions = const HtmlToolbarOptions(),
+      this.otherOptions = const OtherOptions(),
+      this.plugins = const [],
+      required this.boxHeigh})
+      : super(key: key);
 
   /// The controller that is passed to the widget, which allows multiple [HtmlEditor]
   /// widgets to be used on the same page independently.
@@ -35,6 +36,8 @@ class HtmlEditor extends StatelessWidget {
   /// Sets the list of Summernote plugins enabled in the editor.
   final List<Plugins> plugins;
 
+  final double boxHeigh;
+
   @override
   Widget build(BuildContext context) {
     if (kIsWeb) {
@@ -46,6 +49,7 @@ class HtmlEditor extends StatelessWidget {
         htmlEditorOptions: htmlEditorOptions,
         htmlToolbarOptions: htmlToolbarOptions,
         otherOptions: otherOptions,
+        boxHeight: boxHeigh,
       );
     } else {
       return Text(

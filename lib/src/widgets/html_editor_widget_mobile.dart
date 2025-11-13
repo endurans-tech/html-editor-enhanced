@@ -15,15 +15,16 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 /// The HTML Editor widget itself, for mobile (uses InAppWebView)
 class HtmlEditorWidget extends StatefulWidget {
-  HtmlEditorWidget({
-    Key? key,
-    required this.controller,
-    this.callbacks,
-    required this.plugins,
-    required this.htmlEditorOptions,
-    required this.htmlToolbarOptions,
-    required this.otherOptions,
-  }) : super(key: key);
+  HtmlEditorWidget(
+      {Key? key,
+      required this.controller,
+      this.callbacks,
+      required this.plugins,
+      required this.htmlEditorOptions,
+      required this.htmlToolbarOptions,
+      required this.otherOptions,
+      required this.boxHeigh})
+      : super(key: key);
 
   final HtmlEditorController controller;
   final Callbacks? callbacks;
@@ -31,6 +32,7 @@ class HtmlEditorWidget extends StatefulWidget {
   final HtmlEditorOptions htmlEditorOptions;
   final HtmlToolbarOptions htmlToolbarOptions;
   final OtherOptions otherOptions;
+  final double boxHeigh;
 
   @override
   _HtmlEditorWidgetMobileState createState() => _HtmlEditorWidgetMobileState();
@@ -66,7 +68,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
 
   @override
   void initState() {
-    docHeight = widget.otherOptions.height;
+    docHeight = widget.boxHeigh;
     key = getRandString(10);
     if (widget.htmlEditorOptions.filePath != null) {
       filePath = widget.htmlEditorOptions.filePath!;
@@ -89,11 +91,11 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
   void resetHeight() async {
     if (mounted) {
       this.setState(() {
-        docHeight = widget.otherOptions.height;
+        docHeight = widget.boxHeigh;
       });
       await widget.controller.editorController!.evaluateJavascript(
           source:
-              "\$('div.note-editable').outerHeight(${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)});");
+              "\$('div.note-editable').outerHeight(${widget.boxHeigh - (toolbarKey.currentContext?.size?.height ?? 0)});");
     }
   }
 
@@ -108,10 +110,10 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
         onVisibilityChanged: (VisibilityInfo info) async {
           if (!visibleStream.isClosed) {
             cachedVisibleDecimal = info.visibleFraction == 1
-                ? (info.size.height / widget.otherOptions.height).clamp(0, 1)
+                ? (info.size.height / widget.boxHeigh).clamp(0, 1)
                 : info.visibleFraction;
             visibleStream.add(info.visibleFraction == 1
-                ? (info.size.height / widget.otherOptions.height).clamp(0, 1)
+                ? (info.size.height / widget.boxHeigh).clamp(0, 1)
                 : info.visibleFraction);
           }
         },
@@ -147,8 +149,8 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                     javaScriptEnabled: true,
                     transparentBackground: true,
                     useShouldOverrideUrlLoading: true,
-                    useHybridComposition: widget.htmlEditorOptions
-                        .androidUseHybridComposition,
+                    useHybridComposition:
+                        widget.htmlEditorOptions.androidUseHybridComposition,
                     loadWithOverviewMode: true,
                   ),
                   initialUserScripts:
@@ -208,13 +210,14 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                       /// editable elements still resizes the editor
                       if ((cachedVisibleDecimal ?? 0) > 0.1) {
                         this.setState(() {
-                          docHeight = widget.otherOptions.height *
-                              cachedVisibleDecimal!;
+                          docHeight = widget.boxHeigh * cachedVisibleDecimal!;
                         });
                         await setHeightJS();
                       }
-                      var visibleDecimal = await visibleStream.stream.firstWhere((_) => !visibleStream.isClosed, orElse: () => 0);
-                      var newHeight = widget.otherOptions.height;
+                      var visibleDecimal = await visibleStream.stream
+                          .firstWhere((_) => !visibleStream.isClosed,
+                              orElse: () => 0);
+                      var newHeight = widget.boxHeigh;
                       if (visibleDecimal > 0.1) {
                         this.setState(() {
                           docHeight = newHeight * visibleDecimal;
@@ -368,7 +371,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                           \$('#summernote-2').summernote({
                               placeholder: "${widget.htmlEditorOptions.hint ?? ""}",
                               tabsize: 2,
-                              height: ${widget.otherOptions.height - (toolbarKey.currentContext?.size?.height ?? 0)},
+                              height: ${widget.boxHeigh - (toolbarKey.currentContext?.size?.height ?? 0)},
                               toolbar: $summernoteToolbar
                               disableGrammar: false,
                               spellCheck: ${widget.htmlEditorOptions.spellCheck},
@@ -473,7 +476,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                                 setState(mounted, this.setState, () {
                                   docHeight = (double.tryParse(
                                               height.first.toString()) ??
-                                          widget.otherOptions.height) +
+                                          widget.boxHeigh) +
                                       (toolbarKey
                                               .currentContext?.size?.height ??
                                           0);
