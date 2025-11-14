@@ -64,7 +64,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
   @override
   void initState() {
     actualHeight = widget.boxHeight;
-    createdViewId = getRandString(10);
+    createdViewId = "1234567890"; //getRandString(10);
     widget.controller.viewId = createdViewId;
 
     super.initState();
@@ -562,6 +562,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
     if (oldWidget.boxHeight != widget.boxHeight) {
       setState(() {
         actualHeight = widget.boxHeight;
+        widget.controller.viewId = createdViewId;
       });
     }
   }
